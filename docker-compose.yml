@@ -17,7 +17,7 @@ services:
       - "6379:6379"
 
   finapp:
-    build: .
+    image: dokcharan/finapp:latest
     depends_on:
       cassandra:
         condition: service_healthy
