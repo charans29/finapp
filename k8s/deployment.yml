@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finapp
+  labels:
+    app: finapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finapp
+  template:
+    metadata:
+      labels:
+        app: finapp
+    spec:
+      containers:
+        - name: finapp
+          image: dokcharan/finapp:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATA_CASSANDRA_CONTACT_POINTS
+              value: cassandra
+            - name: SPRING_DATA_REDIS_HOST
+              value: redis
