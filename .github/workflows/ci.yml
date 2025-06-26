@@ -44,6 +44,20 @@ jobs:
 
       - name: Grant permission to Gradle wrapper
         run: chmod +x gradlew
+      
+      - name: Wait for Cassandra to be ready
+        run: |
+          echo "Waiting for Cassandra..."
+          for i in {1..20}; do
+            cqlsh localhost 9042 -e 'describe keyspaces' && break || sleep 5
+          done
+
+      - name: Wait for Redis to be ready
+        run: |
+          echo "Waiting for Redis..."
+          for i in {1..10}; do
+            redis-cli -h localhost ping | grep PONG && break || sleep 2
+          done
 
       - name: Build & test
         run: ./gradlew clean test --no-daemon
