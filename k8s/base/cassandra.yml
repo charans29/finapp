@@ -30,3 +30,10 @@ spec:
           env:
             - name: CASSANDRA_START_RPC
               value: "true"
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "500m"
+            limits:
+              memory: "2048Mi"
+              cpu: "1000m"
