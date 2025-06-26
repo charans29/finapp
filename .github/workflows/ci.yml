@@ -19,12 +19,17 @@ jobs:
           --health-cmd="cqlsh -e 'describe keyspaces'" 
           --health-interval=20s 
           --health-timeout=10s 
-          --health-retries=5
+          --health-retries=10
 
       redis:
         image: redis:latest
         ports:
           - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=10
 
     env:
       SPRING_DATA_CASSANDRA_CONTACT_POINTS: localhost
@@ -44,20 +49,6 @@ jobs:
 
       - name: Grant permission to Gradle wrapper
         run: chmod +x gradlew
-      
-      - name: Wait for Cassandra to be ready
-        run: |
-          echo "Waiting for Cassandra..."
-          for i in {1..20}; do
-            cqlsh localhost 9042 -e 'describe keyspaces' && break || sleep 5
-          done
-
-      - name: Wait for Redis to be ready
-        run: |
-          echo "Waiting for Redis..."
-          for i in {1..10}; do
-            redis-cli -h localhost ping | grep PONG && break || sleep 2
-          done
 
       - name: Build & test
         run: ./gradlew clean test --no-daemon
